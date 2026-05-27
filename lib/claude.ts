@@ -1,9 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type { EvaluationResult, FormFactor } from './types'
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
 
 const SYSTEM_PROMPT = `당신은 Physical AI 시나리오를 JTBD(Job to Be Done) 프레임워크로 분석하는 전문가입니다.
 
@@ -53,8 +50,10 @@ const SYSTEM_PROMPT = `당신은 Physical AI 시나리오를 JTBD(Job to Be Done
 
 export async function evaluateScenario(
   scenario: string,
-  formFactor: FormFactor
+  formFactor: FormFactor,
+  apiKey?: string
 ): Promise<EvaluationResult> {
+  const client = new Anthropic({ apiKey: apiKey || process.env.ANTHROPIC_API_KEY })
   const userMessage = `다음 Physical AI 시나리오를 ${formFactor} 폼팩터 기준으로 JTBD 프레임워크로 분석하고 평가해주세요.
 
 시나리오:

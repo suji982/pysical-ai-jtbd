@@ -25,7 +25,7 @@ const FORM_FACTORS: { value: FormFactor; label: string; desc: string }[] = [
   },
 ]
 
-export default function SingleEvaluator() {
+export default function SingleEvaluator({ apiKey }: { apiKey: string }) {
   const [scenario, setScenario] = useState('')
   const [formFactor, setFormFactor] = useState<FormFactor>('Luna')
   const [loading, setLoading] = useState(false)
@@ -42,9 +42,12 @@ export default function SingleEvaluator() {
     setResult(null)
 
     try {
+      const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+      if (apiKey) headers['x-api-key'] = apiKey
+
       const res = await fetch('/api/evaluate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ scenario: scenario.trim(), form_factor: formFactor }),
       })
       const data = await res.json()

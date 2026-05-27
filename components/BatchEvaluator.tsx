@@ -105,7 +105,7 @@ function exportToExcel(results: ResultWithError[]) {
   XLSX.writeFile(wb, `jtbd_results_${Date.now()}.xlsx`)
 }
 
-export default function BatchEvaluator() {
+export default function BatchEvaluator({ apiKey }: { apiKey: string }) {
   const [defaultFormFactor, setDefaultFormFactor] = useState<FormFactor>('Luna')
   const [file, setFile] = useState<File | null>(null)
   const [dragging, setDragging] = useState(false)
@@ -168,9 +168,12 @@ export default function BatchEvaluator() {
       if (abortRef.current) break
       const row = rows[i]
       try {
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+        if (apiKey) headers['x-api-key'] = apiKey
+
         const res = await fetch('/api/evaluate', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({ scenario: row.scenario, form_factor: row.form_factor }),
         })
         const data = await res.json()

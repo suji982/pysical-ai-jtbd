@@ -22,7 +22,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const result = await evaluateScenario(scenario.trim(), form_factor as FormFactor)
+    // 사용자가 입력한 키 우선, 없으면 서버 환경변수 사용
+    const userApiKey = request.headers.get('x-api-key') || undefined
+    const result = await evaluateScenario(scenario.trim(), form_factor as FormFactor, userApiKey)
     return NextResponse.json(result)
   } catch (error) {
     console.error('Evaluate API error:', error)
